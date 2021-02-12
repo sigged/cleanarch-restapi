@@ -1,3 +1,8 @@
+using Mde.WishList.Api.Application;
+using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Infrastructure;
+using Mde.WishList.Api.Infrastructure.Persistence;
+using Mde.WishList.Api.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +31,17 @@ namespace Mde.WishList.Api.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplication();
+            services.AddInfrastructure(Configuration);
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
+
+            services.AddHttpContextAccessor();
+
+            //services.AddHealthChecks()
+            //    .AddDbContextCheck<ApplicationDbContext>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -45,9 +61,9 @@ namespace Mde.WishList.Api.WebApi
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

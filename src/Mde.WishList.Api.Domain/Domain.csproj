@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Mde.WishList.Api.Domain</AssemblyName>
+    <RootNamespace>Mde.WishList.Api.Domain</RootNamespace>
+  </PropertyGroup>
+
+</Project>

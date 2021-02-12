@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Mde.WishList.Api.Infrastructure</AssemblyName>
+    <RootNamespace>Mde.WishList.Api.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mde.WishList.Api.Application\Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Mde.WishList.Api.WebApi</AssemblyName>
+    <RootNamespace>Mde.WishList.Api.WebApi</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mde.WishList.Api.Application\Application.csproj" />
+    <ProjectReference Include="..\Mde.WishList.Api.Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

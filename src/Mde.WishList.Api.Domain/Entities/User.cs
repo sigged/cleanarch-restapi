@@ -7,9 +7,22 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Domain.Entities
 {
-    public class User : AuditableEntity
+    public interface IUser
     {
-        public int Id { get; set; }
+        string Id { get; set; }
+        string Email { get; set; }
+        string UserName { get; set; }
+        string FirstName { get; set; }
+        string LastName { get; set; }
+    }
+
+    public class User : AuditableEntity, IUser
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
     }
 }

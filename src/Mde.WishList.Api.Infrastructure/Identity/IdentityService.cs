@@ -1,5 +1,6 @@
 ﻿using Mde.WishList.Api.Application.Common.Interfaces;
 using Mde.WishList.Api.Application.Common.Models;
+using Mde.WishList.Api.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,15 +12,18 @@ namespace Mde.WishList.Api.Infrastructure.Identity
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
         private readonly IAuthorizationService _authorizationService;
 
         public IdentityService(
-            UserManager<ApplicationUser> userManager,
+            UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
             IAuthorizationService authorizationService)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
             _authorizationService = authorizationService;
         }
@@ -51,6 +55,12 @@ namespace Mde.WishList.Api.Infrastructure.Identity
             return await _userManager.IsInRoleAsync(user, role);
         }
 
+        public async Task<Result> AuthenticateAsync(string userName, string password)
+        {
+            var result = await _signInManager.PasswordSignInAsync(userName, password, false, lockoutOnFailure: false);
+            return result.ToApplicationResult();
+        }
+
         public async Task<bool> AuthorizeAsync(string userId, string policyName)
         {
             var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
@@ -79,6 +89,11 @@ namespace Mde.WishList.Api.Infrastructure.Identity
             var result = await _userManager.DeleteAsync(user);
 
             return result.ToApplicationResult();
+        }
+
+        public async Task<IUser> FindByName(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
         }
     }
 }

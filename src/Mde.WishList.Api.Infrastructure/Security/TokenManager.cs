@@ -1,54 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Application.Common.Security;
+using Mde.WishList.Api.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Infrastructure.Security
 {
-    public interface ITokenManager
+
+    public class TokenManager : ITokenManager
     {
-        string GenerateRandomToken(int size = 32);
-
-        //Task<bool> IsValidRefreshToken(string refreshToken);
-
-        //Task RevokeToken(string refreshToken);
-
-        //Task<AuthenticationTokenPair> GenerateAuthTokens(IUser user);
-
-        ///// <summary>
-        ///// Returns the principal from a token, returns null if the token is invalid or expired
-        ///// </summary>
-        ///// <param name="accessToken"></param>
-        ///// <param name="ignoreLifetime"></param>
-        ///// <returns></returns>
-        //Task<IPrincipal> GetAccessTokenPrincipal(string accessToken, bool ignoreExpiration = false);
-    }
-
-    public class TokenManager //: ITokenManager
-    {
-        //private readonly IIdentityService identityService;
-        //private readonly IDeviceIdGenerator deviceIdGenerator;
+        private readonly IIdentityService _identityService;
         private readonly TokenSettings tokenSettings;
-        //private readonly CoreContext context;
         private readonly JwtSecurityTokenHandler tokenHandler;
         private readonly ITokenValidationParametersFactory tokenValidationParmsFactory;
 
         public TokenManager(
-            //IIdentityService identityService,
-            //IDeviceIdGenerator deviceIdGenerator,
+            IIdentityService identityService,
             TokenSettings tokenSettings,
             ITokenValidationParametersFactory tokenValidationParmsFactory
-            //CoreContext context
         )
         {
-            //this.identityService = identityService;
+            _identityService = identityService;
             //this.deviceIdGenerator = deviceIdGenerator;
             this.tokenSettings = tokenSettings;
             this.tokenValidationParmsFactory = tokenValidationParmsFactory;
@@ -94,6 +72,21 @@ namespace Mde.WishList.Api.Infrastructure.Security
         //    context.Set<RefreshToken>().Remove(token);
         //    await context.SaveChangesAsync();
         //}
+
+
+        public async Task<string> GenerateAuthTokenAsync(IUser user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var claims = await _identityService.GetClaims(user);
+
+            JwtSecurityToken accessToken;
+            accessToken = CreateAccessToken(claims, tokenSettings);
+
+            return tokenHandler.WriteToken(accessToken);
+        }
+
 
         //public async Task<AuthenticationTokenPair> GenerateAuthTokens(IUser user)
         //{
@@ -151,17 +144,17 @@ namespace Mde.WishList.Api.Infrastructure.Security
         //    return refreshToken;
         //}
 
-        //private JwtSecurityToken CreateAccessToken(IEnumerable<Claim> claims, TokenSettings tokenSettings)
-        //{
-        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.ApiJwtKey));
-        //    var signatureCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        //    return new JwtSecurityToken(
-        //        claims: claims,
-        //        issuer: tokenSettings.JwtIssuer,
-        //        audience: tokenSettings.JwtAudience,
-        //        expires: DateTime.UtcNow.AddMinutes(tokenSettings.JwtExpiryMinutes),
-        //        signingCredentials: signatureCredentials);
-        //}
+        private JwtSecurityToken CreateAccessToken(IEnumerable<Claim> claims, TokenSettings tokenSettings)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.ApiJwtKey));
+            var signatureCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            return new JwtSecurityToken(
+                claims: claims,
+                issuer: tokenSettings.JwtIssuer,
+                audience: tokenSettings.JwtAudience,
+                expires: DateTime.UtcNow.AddMinutes(tokenSettings.JwtExpiryMinutes),
+                signingCredentials: signatureCredentials);
+        }
 
     }
 

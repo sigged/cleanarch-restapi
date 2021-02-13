@@ -1,4 +1,5 @@
 ﻿using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Application.Common.Security;
 using Mde.WishList.Api.Infrastructure.Files;
 using Mde.WishList.Api.Infrastructure.Identity;
 using Mde.WishList.Api.Infrastructure.Persistence;
@@ -22,6 +23,7 @@ namespace Mde.WishList.Api.Infrastructure
             var jwtSettingsSection = configuration.GetSection("Settings:Jwt");
             services.Configure<TokenSettings>(jwtSettingsSection);
             var tokenSettings = jwtSettingsSection.Get<TokenSettings>();
+            services.AddSingleton(tokenSettings);
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
@@ -52,6 +54,7 @@ namespace Mde.WishList.Api.Infrastructure
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<ITokenManager, TokenManager>();
             services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
 
             var tokenValidationParmFactory = new TokenValidationParametersFactory(tokenSettings);

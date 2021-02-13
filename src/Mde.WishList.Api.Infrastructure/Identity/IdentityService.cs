@@ -4,7 +4,10 @@ using Mde.WishList.Api.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Infrastructure.Identity
@@ -94,6 +97,22 @@ namespace Mde.WishList.Api.Infrastructure.Identity
         public async Task<IUser> FindByName(string userName)
         {
             return await _userManager.FindByNameAsync(userName);
+        }
+
+        public async Task<IEnumerable<Claim>> GetClaims(IUser user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var applicationUser = user as ApplicationUser;
+            if (applicationUser == null)
+                throw new ArgumentException("Parameter must be of type ApplicationUser", nameof(user));
+
+            // populate claims
+            var claimsForIdentity = await _userManager.GetClaimsAsync(applicationUser);
+            //claimsForIdentity.Add(new Claim(ApiClaimTypes.UserId, user.Id.ToString()));
+
+            return claimsForIdentity;
         }
     }
 }

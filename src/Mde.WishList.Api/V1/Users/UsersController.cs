@@ -35,14 +35,16 @@ namespace Mde.WishList.Api.WebApi.V1.Users
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(Dto.AuthenticationResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.AuthenticationResult), StatusCodes.Status401Unauthorized)]
 
         public async Task<ActionResult> Authenticate(AuthenticateUserCommand command)
         {
+            //Mediator.
             var result = await Mediator.Send(command);
+
             if (result.Succeeded)
-                return Ok();
+                return Ok(result);
             else
                 return Unauthorized(result);
         }

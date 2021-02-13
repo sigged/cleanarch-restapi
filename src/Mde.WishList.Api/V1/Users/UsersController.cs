@@ -1,11 +1,14 @@
 ﻿using Mde.WishList.Api.Application.Users.Commands.CreateUser;
+using Mde.WishList.Api.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace Mde.WishList.Api.WebApi.Controllers
+namespace Mde.WishList.Api.WebApi.V1.Users
 {
+    [ApiVersion("1.0")]
+    [ApiController]
     [Authorize]
     public class UsersController : ApiControllerBase
     {

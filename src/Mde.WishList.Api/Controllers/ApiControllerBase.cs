@@ -5,7 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Mde.WishList.Api.WebApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public abstract class ApiControllerBase : ControllerBase
     {
         private ISender _mediator;

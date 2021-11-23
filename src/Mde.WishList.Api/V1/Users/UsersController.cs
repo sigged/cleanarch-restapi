@@ -12,22 +12,10 @@ namespace Mde.WishList.Api.WebApi.V1.Users
     [Authorize]
     public class UsersController : ApiControllerBase
     {
-        //[HttpGet]
-        //public async Task<ActionResult<TodosVm>> Get()
-        //{
-        //    return await Mediator.Send(new GetTodosQuery());
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<FileResult> Get(int id)
-        //{
-        //    var vm = await Mediator.Send(new ExportTodosQuery { ListId = id });
-
-        //    return File(vm.Content, vm.ContentType, vm.FileName);
-        //}
-
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<string>> Create(CreateUserCommand command)
         {
             return await Mediator.Send(command);
@@ -35,8 +23,8 @@ namespace Mde.WishList.Api.WebApi.V1.Users
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(Dto.AuthenticationResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Dto.AuthenticationResult), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 
         public async Task<ActionResult> Authenticate(AuthenticateUserCommand command)
         {

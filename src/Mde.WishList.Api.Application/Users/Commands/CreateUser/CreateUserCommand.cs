@@ -1,10 +1,5 @@
 ﻿using Mde.WishList.Api.Application.Common.Interfaces;
-using Mde.WishList.Api.Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +8,8 @@ namespace Mde.WishList.Api.Application.Users.Commands.CreateUser
     public class CreateUserCommand : IRequest<string>
     {
         public string UserName { get; set; }
+
+        public string Password { get; set; }
     }
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, string>
@@ -28,7 +25,7 @@ namespace Mde.WishList.Api.Application.Users.Commands.CreateUser
 
         public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.CreateUserAsync(request.UserName, "sderdeyn@gmail.com123A");
+            var result = await _identityService.CreateUserAsync(request.UserName, request.Password);
             if (result.Result.Succeeded)
             {
                 return result.UserId;
@@ -37,16 +34,6 @@ namespace Mde.WishList.Api.Application.Users.Commands.CreateUser
             {
                 return null;
             }
-            //var entity = new User();
-
-            //entity.Title = request.Title;
-
-            //_context.TodoLists.Add(entity);
-
-            //await _context.SaveChangesAsync(cancellationToken);
-
-            //return entity.Id;
-            //throw new NotImplementedException();
         }
     }
 }

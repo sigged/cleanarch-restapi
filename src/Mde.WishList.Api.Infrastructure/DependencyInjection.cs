@@ -6,6 +6,7 @@ using Mde.WishList.Api.Infrastructure.Persistence;
 using Mde.WishList.Api.Infrastructure.Security;
 using Mde.WishList.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +66,7 @@ namespace Mde.WishList.Api.Infrastructure
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; 
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
+
             .AddJwtBearer(jwtOptions => {
                 jwtOptions.ClaimsIssuer = tokenSettings.JwtIssuer;
                 jwtOptions.TokenValidationParameters = tokenValidationParms;
@@ -86,7 +88,14 @@ namespace Mde.WishList.Api.Infrastructure
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator"));
+
+                options.AddPolicy("DeletePolicy", policy =>
+                    policy.Requirements.Add(new SameCreatorRequirement()));
             });
+
+            services.AddTransient<IResourceAuthorizationService, ResourceAuthorizationService>();
+
+            services.AddSingleton<IAuthorizationHandler, AuditableEntityAuthorizationHandler>();
 
             return services;
         }

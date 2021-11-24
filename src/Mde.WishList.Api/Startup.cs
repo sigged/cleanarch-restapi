@@ -2,9 +2,11 @@ using Mde.WishList.Api.Application;
 using Mde.WishList.Api.Application.Common.Interfaces;
 using Mde.WishList.Api.Infrastructure;
 using Mde.WishList.Api.Infrastructure.Persistence;
+using Mde.WishList.Api.Infrastructure.Security;
 using Mde.WishList.Api.WebApi.Filters;
 using Mde.WishList.Api.WebApi.Services;
 using Mde.WishList.Api.WebApi.Swagger;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -74,6 +76,8 @@ namespace Mde.WishList.Api.WebApi
             */
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

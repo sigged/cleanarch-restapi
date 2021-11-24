@@ -110,7 +110,7 @@ namespace Mde.WishList.Api.Infrastructure.Identity
 
             // populate claims
             var claimsForIdentity = await _userManager.GetClaimsAsync(applicationUser);
-            //claimsForIdentity.Add(new Claim(ApiClaimTypes.UserId, user.Id.ToString()));
+            claimsForIdentity.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             return claimsForIdentity;
         }

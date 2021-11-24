@@ -2,6 +2,7 @@
 using Mde.WishList.Api.Domain.ValueObjects;
 using Mde.WishList.Api.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,19 +13,35 @@ namespace Mde.WishList.Api.Infrastructure.Persistence
         public static async Task SeedDefaultUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             var administratorRole = new IdentityRole("Administrator");
+            var userRole = new IdentityRole("User");
 
-            if (roleManager.Roles.All(r => r.Name != administratorRole.Name))
+            var roles = new[] { administratorRole, userRole };
+
+            foreach(var role in roles)
             {
-                await roleManager.CreateAsync(administratorRole);
+                if (roleManager.Roles.All(r => r.Name != role.Name))
+                {
+                    await roleManager.CreateAsync(role);
+                }
             }
 
-            var administrator = new ApplicationUser { UserName = "administrator@localhost", Email = "administrator@localhost" };
+            var adminUser = new ApplicationUser { Id = "the-administrator-id", UserName = "administrator@localhost", Email = "administrator@localhost" };
+            var normalUser = new ApplicationUser { Id = "a-normal-user", UserName = "normal@localhost", Email = "normal@localhost" };
 
-            if (userManager.Users.All(u => u.UserName != administrator.UserName))
+            var users = new[] { adminUser, normalUser };
+
+            
+            foreach(var user in users)
             {
-                await userManager.CreateAsync(administrator, "Administrator1!");
-                await userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
+                if (userManager.Users.All(u => u.UserName != user.UserName))
+                {
+                    await userManager.CreateAsync(user, "Seedpassword1!");
+                }
             }
+
+            await userManager.AddToRolesAsync(adminUser, new[] { administratorRole.Name });
+            await userManager.AddToRolesAsync(normalUser, new[] { userRole.Name });
+
         }
 
         public static async Task SeedSampleDataAsync(ApplicationDbContext context)
@@ -36,6 +53,8 @@ namespace Mde.WishList.Api.Infrastructure.Persistence
                 {
                     Title = "Shopping",
                     Colour = Colour.Blue,
+                    Created = DateTime.Now.AddDays(-1),
+                    CreatedBy = "a-normal-user",
                     Items =
                     {
                         new TodoItem { Title = "Apples", Done = true },
@@ -49,7 +68,7 @@ namespace Mde.WishList.Api.Infrastructure.Persistence
                     }
                 });
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithoutAutoAuditables();
             }
         }
     }

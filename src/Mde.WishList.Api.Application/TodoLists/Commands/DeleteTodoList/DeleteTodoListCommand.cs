@@ -17,10 +17,12 @@ namespace Mde.WishList.Api.Application.TodoLists.Commands.DeleteTodoList
     public class DeleteTodoListCommandHandler : IRequestHandler<DeleteTodoListCommand>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IResourceAuthorizationService _resourceAuthorizationService;
 
-        public DeleteTodoListCommandHandler(IApplicationDbContext context)
+        public DeleteTodoListCommandHandler(IApplicationDbContext context, IResourceAuthorizationService resourceAuthorizationService)
         {
             _context = context;
+            _resourceAuthorizationService = resourceAuthorizationService;
         }
 
         public async Task<Unit> Handle(DeleteTodoListCommand request, CancellationToken cancellationToken)
@@ -34,9 +36,14 @@ namespace Mde.WishList.Api.Application.TodoLists.Commands.DeleteTodoList
                 throw new NotFoundException(nameof(TodoList), request.Id);
             }
 
-            _context.TodoLists.Remove(entity);
+            if (!await _resourceAuthorizationService.Authorize(entity, "DeletePolicy"))
+            {
+                throw new ForbiddenAccessException();
+            }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            //_context.TodoLists.Remove(entity);
+
+            //await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

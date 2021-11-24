@@ -13,7 +13,6 @@ namespace Mde.WishList.Api.WebApi.V1.Users
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Authorize]
     public class TodoListsController : ApiControllerBase
     {
         [HttpGet]

@@ -13,6 +13,8 @@ namespace Mde.WishList.Api.Application.Common.Interfaces
 
         //DbSet<User> Users { get; set; }
 
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken());
+
+        Task<int> SaveChangesWithoutAutoAuditables(CancellationToken cancellationToken = new CancellationToken());
     }
 }

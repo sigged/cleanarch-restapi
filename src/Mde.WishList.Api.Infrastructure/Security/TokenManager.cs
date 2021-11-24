@@ -80,6 +80,7 @@ namespace Mde.WishList.Api.Infrastructure.Security
                 throw new ArgumentNullException(nameof(user));
 
             var claims = await _identityService.GetClaims(user);
+            
 
             JwtSecurityToken accessToken;
             accessToken = CreateAccessToken(claims, tokenSettings);

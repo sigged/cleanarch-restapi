@@ -59,6 +59,15 @@ namespace Mde.WishList.Api.Infrastructure.Persistence
             return result;
         }
 
+        public async Task<int> SaveChangesWithoutAutoAuditables(CancellationToken cancellationToken = new CancellationToken())
+        {
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            await DispatchEvents();
+
+            return result;
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

@@ -20,11 +20,13 @@ namespace Mde.WishList.Api.Application.TodoLists.Queries.GetTodos
     public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
 
-        public GetTodosQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetTodosQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService, IMapper mapper)
         {
             _context = context;
+            _currentUserService = currentUserService;
             _mapper = mapper;
         }
 
@@ -38,6 +40,7 @@ namespace Mde.WishList.Api.Application.TodoLists.Queries.GetTodos
                     .ToList(),
 
                 Lists = await _context.TodoLists
+                    .Where(e => e.CreatedBy.Equals(_currentUserService.UserId))
                     .AsNoTracking()
                     .ProjectTo<TodoListDto>(_mapper.ConfigurationProvider)
                     .OrderBy(t => t.Title)

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Application.TodoLists.Queries.GetTodos
 {
+    [Authorize]
     public class GetTodosQuery : IRequest<TodosVm>
     {
     }

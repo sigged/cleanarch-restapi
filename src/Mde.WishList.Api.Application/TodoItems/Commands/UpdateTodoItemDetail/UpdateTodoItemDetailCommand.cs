@@ -22,10 +22,12 @@ namespace Mde.WishList.Api.Application.TodoItems.Commands.UpdateTodoItemDetail
     public class UpdateTodoItemDetailCommandHandler : IRequestHandler<UpdateTodoItemDetailCommand>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IResourceAuthorizationService _resourceAuthorizationService;
 
-        public UpdateTodoItemDetailCommandHandler(IApplicationDbContext context)
+        public UpdateTodoItemDetailCommandHandler(IApplicationDbContext context, IResourceAuthorizationService resourceAuthorizationService)
         {
             _context = context;
+            _resourceAuthorizationService = resourceAuthorizationService;
         }
 
         public async Task<Unit> Handle(UpdateTodoItemDetailCommand request, CancellationToken cancellationToken)

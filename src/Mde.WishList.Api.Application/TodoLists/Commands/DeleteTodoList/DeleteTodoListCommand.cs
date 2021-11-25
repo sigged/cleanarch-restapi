@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Application.TodoLists.Commands.DeleteTodoList
 {
+
+    [Authorize]
     public class DeleteTodoListCommand : IRequest
     {
         public int Id { get; set; }
@@ -37,19 +39,14 @@ namespace Mde.WishList.Api.Application.TodoLists.Commands.DeleteTodoList
                 throw new NotFoundException(nameof(TodoList), request.Id);
             }
 
-
-            if (!await _resourceAuthorizationService.Authorize(entity, Policies.MustBeCreator))
-            {
-                throw new ForbiddenAccessException();
-            }
-            if (!await _resourceAuthorizationService.Authorize(entity, Policies.MustBeLastModifier))
+            if (!await _resourceAuthorizationService.AuthorizeAny(entity, Policies.MustBeCreator, Policies.MustBeAdmin))
             {
                 throw new ForbiddenAccessException();
             }
 
-            //_context.TodoLists.Remove(entity);
+            _context.TodoLists.Remove(entity);
 
-            //await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

@@ -1,5 +1,6 @@
 ﻿using Mde.WishList.Api.Application.Common.Exceptions;
 using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Application.Common.Security;
 using Mde.WishList.Api.Domain.Entities;
 using MediatR;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Application.TodoLists.Commands.UpdateTodoList
 {
+    [Authorize]
     public class UpdateTodoListCommand : IRequest
     {
         public int Id { get; set; }
@@ -17,6 +19,7 @@ namespace Mde.WishList.Api.Application.TodoLists.Commands.UpdateTodoList
     public class UpdateTodoListCommandHandler : IRequestHandler<UpdateTodoListCommand>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IResourceAuthorizationService _resourceAuthorizationService;
 
         public UpdateTodoListCommandHandler(IApplicationDbContext context)
         {

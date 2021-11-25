@@ -1,4 +1,5 @@
 ﻿using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Application.Common.Security;
 using Mde.WishList.Api.Domain.Entities;
 using Mde.WishList.Api.Domain.Events;
 using MediatR;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Application.TodoItems.Commands.CreateTodoItem
 {
+
+    [Authorize]
     public class CreateTodoItemCommand : IRequest<int>
     {
         public int ListId { get; set; }

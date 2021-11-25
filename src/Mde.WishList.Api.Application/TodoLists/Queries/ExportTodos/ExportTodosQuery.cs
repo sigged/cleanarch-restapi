@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Application.Common.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Application.TodoLists.Queries.ExportTodos
 {
+
+    [Authorize(Policy = Policies.MustBeAdmin)]
     public class ExportTodosQuery : IRequest<ExportTodosVm>
     {
         public int ListId { get; set; }

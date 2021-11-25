@@ -1,9 +1,11 @@
-﻿using Mde.WishList.Api.Domain.Entities;
+﻿using Mde.WishList.Api.Application.Common.Security;
+using Mde.WishList.Api.Domain.Entities;
 using Mde.WishList.Api.Domain.ValueObjects;
 using Mde.WishList.Api.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Infrastructure.Persistence
@@ -39,6 +41,14 @@ namespace Mde.WishList.Api.Infrastructure.Persistence
                 }
             }
 
+            //add claims to role level
+            await roleManager.AddClaimAsync(administratorRole, new Claim(ClaimKeys.IsAdmin, "true"));
+            await roleManager.AddClaimAsync(userRole, new Claim(ClaimKeys.IsUser, "true"));
+
+            //await userManager.AddClaimAsync(adminUser, new Claim("IsAdmin", "true"));
+            //await userManager.AddClaimAsync(normalUser, new Claim("IsUser", "true"));
+
+            //add users to roles
             await userManager.AddToRolesAsync(adminUser, new[] { administratorRole.Name });
             await userManager.AddToRolesAsync(normalUser, new[] { userRole.Name });
 

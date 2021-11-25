@@ -15,17 +15,20 @@ namespace Mde.WishList.Api.Infrastructure.Identity
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
         private readonly IAuthorizationService _authorizationService;
 
         public IdentityService(
-            UserManager<ApplicationUser> userManager, 
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
             IAuthorizationService authorizationService)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
             _authorizationService = authorizationService;
@@ -108,8 +111,19 @@ namespace Mde.WishList.Api.Infrastructure.Identity
             if (applicationUser == null)
                 throw new ArgumentException("Parameter must be of type ApplicationUser", nameof(user));
 
-            // populate claims
-            var claimsForIdentity = await _userManager.GetClaimsAsync(applicationUser);
+            List<Claim> claimsForIdentity = new List<Claim>();
+
+            // populate claims from assigned roles added to user
+            foreach (var roleName in await _userManager.GetRolesAsync(applicationUser))
+            {
+                var role = await _roleManager.FindByNameAsync(roleName);
+                claimsForIdentity.AddRange(await _roleManager.GetClaimsAsync(role));
+            }
+            
+            // populate claims directly added to user
+            claimsForIdentity.AddRange(await _userManager.GetClaimsAsync(applicationUser));
+
+            // finally, add ID
             claimsForIdentity.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             return claimsForIdentity;

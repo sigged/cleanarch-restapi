@@ -42,8 +42,8 @@ namespace Mde.WishList.Api.Infrastructure.Persistence
             }
 
             //add claims to role level
-            await roleManager.AddClaimAsync(administratorRole, new Claim(ClaimKeys.IsAdmin, "true"));
-            await roleManager.AddClaimAsync(userRole, new Claim(ClaimKeys.IsUser, "true"));
+            await roleManager.AddClaimAsync(administratorRole, new Claim(Application.Common.Security.ClaimTypes.IsAdmin, "true"));
+            await roleManager.AddClaimAsync(userRole, new Claim(Application.Common.Security.ClaimTypes.IsUser, "true"));
 
             //await userManager.AddClaimAsync(adminUser, new Claim("IsAdmin", "true"));
             //await userManager.AddClaimAsync(normalUser, new Claim("IsUser", "true"));

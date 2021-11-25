@@ -27,9 +27,9 @@ namespace Mde.WishList.Api.WebApi.V1.Users
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, MediaTypeNames.Application.Octet)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, MediaTypeNames.Application.Octet)]
         public async Task<FileResult> Get(int id)
         {
             var vm = await Mediator.Send(new ExportTodosQuery { ListId = id });

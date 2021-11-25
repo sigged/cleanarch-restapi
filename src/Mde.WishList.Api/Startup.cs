@@ -4,6 +4,7 @@ using Mde.WishList.Api.Infrastructure;
 using Mde.WishList.Api.Infrastructure.Persistence;
 using Mde.WishList.Api.Infrastructure.Security;
 using Mde.WishList.Api.WebApi.Filters;
+using Mde.WishList.Api.WebApi.Middlewares;
 using Mde.WishList.Api.WebApi.Services;
 using Mde.WishList.Api.WebApi.Swagger;
 using Microsoft.AspNetCore.Authorization;
@@ -77,7 +78,10 @@ namespace Mde.WishList.Api.WebApi
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen();
 
-
+            /*
+             Error handling middleware
+            */
+            services.AddTransient<ExceptionPresenter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,6 +104,8 @@ namespace Mde.WishList.Api.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionPresenter>();
 
             app.UseEndpoints(endpoints =>
             {

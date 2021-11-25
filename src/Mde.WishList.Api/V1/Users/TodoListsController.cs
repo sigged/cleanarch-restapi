@@ -4,15 +4,18 @@ using Mde.WishList.Api.Application.TodoLists.Commands.UpdateTodoList;
 using Mde.WishList.Api.Application.TodoLists.Queries.ExportTodos;
 using Mde.WishList.Api.Application.TodoLists.Queries.GetTodos;
 using Mde.WishList.Api.WebApi.Controllers;
-using Microsoft.AspNetCore.Authorization;
+using Mde.WishList.Api.WebApi.Middlewares;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.WebApi.V1.Users
 {
     [ApiVersion("1.0")]
     [ApiController]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesErrorResponseType(typeof(ErrorResponse))]
     public class TodoListsController : ApiControllerBase
     {
         [HttpGet]
@@ -24,9 +27,9 @@ namespace Mde.WishList.Api.WebApi.V1.Users
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, MediaTypeNames.Application.Octet)]
         public async Task<FileResult> Get(int id)
         {
             var vm = await Mediator.Send(new ExportTodosQuery { ListId = id });
@@ -38,6 +41,7 @@ namespace Mde.WishList.Api.WebApi.V1.Users
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<int>> Create(CreateTodoListCommand command)
         {
             return await Mediator.Send(command);
@@ -48,6 +52,7 @@ namespace Mde.WishList.Api.WebApi.V1.Users
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Update(int id, UpdateTodoListCommand command)
         {
             if (id != command.Id)

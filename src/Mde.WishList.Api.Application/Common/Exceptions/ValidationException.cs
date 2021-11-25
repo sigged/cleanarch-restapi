@@ -5,7 +5,7 @@ using FluentValidation.Results;
 
 namespace Mde.WishList.Api.Application.Common.Exceptions
 {
-    public class ValidationException : Exception
+    public class ValidationException : ApplicationException
     {
         public ValidationException()
             : base("One or more validation failures have occurred.")

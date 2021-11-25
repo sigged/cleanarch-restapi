@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mde.WishList.Api.Application.TodoLists.Commands.PurgeTodoLists
 {
-    [Authorize(Roles = "Administrator")]
-    [Authorize(Policy = "CanPurge")]
+    [Authorize(Policy = Policies.MustBeAdmin)]
     public class PurgeTodoListsCommand : IRequest
     {
     }

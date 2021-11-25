@@ -1,5 +1,6 @@
 ﻿using Mde.WishList.Api.Application.Common.Exceptions;
 using Mde.WishList.Api.Application.Common.Interfaces;
+using Mde.WishList.Api.Application.Common.Security;
 using Mde.WishList.Api.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,12 @@ namespace Mde.WishList.Api.Application.TodoLists.Commands.DeleteTodoList
                 throw new NotFoundException(nameof(TodoList), request.Id);
             }
 
-            if (!await _resourceAuthorizationService.Authorize(entity, "DeletePolicy"))
+
+            if (!await _resourceAuthorizationService.Authorize(entity, Policies.MustBeCreator))
+            {
+                throw new ForbiddenAccessException();
+            }
+            if (!await _resourceAuthorizationService.Authorize(entity, Policies.MustBeLastModifier))
             {
                 throw new ForbiddenAccessException();
             }
